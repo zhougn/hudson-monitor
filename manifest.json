@@ -1,7 +1,7 @@
 {
-  "name": "CI Monitor",
+  "name": "hudson Monitor",
   "version": "1.0",
-  "description": "The Monitor for hudson, cruise control, Go, etc.",
+  "description": "Hudson Status Monitor",
   "browser_action": {
     "default_icon": "img/green_light.ico",
     "popup": "popup.html"
