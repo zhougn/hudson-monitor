@@ -1,4 +1,4 @@
-var CIMonitor = new Class({
+var Monitor = new Class({
     _url: 'http://localhost:8080/api/json',
     _projects: ['hello'],
     _interval: 10000,
