@@ -3,8 +3,8 @@ var Monitor = new Class({
     _statues: {
         red        : 'fail',
         blue       : 'success',
-        yellow     : 'building',
-        blue_anime : 'building'
+        blue_anime : 'building',
+        red_anime : 'building'
     },
 
     initialize: function() {
