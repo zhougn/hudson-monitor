@@ -1,6 +1,6 @@
 var Monitor = new Class({
-    _url: 'http://localhost:8080/api/json',
-    _projects: ['hello'],
+    _url: 'http://hudson.dev.fwmrm.net/api/json',
+    _projects: ['RPM_spec'],
     _interval: 10000,
     _statues: {
         red: 'fail',

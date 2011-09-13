@@ -6,6 +6,7 @@
     "default_icon": "img/green_light.ico",
     "popup": "popup.html"
   },
+  "options_page": "options.html",
   "permissions": [
     "<all_urls>",
     "tabs"
