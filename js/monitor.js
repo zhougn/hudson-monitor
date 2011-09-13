@@ -1,9 +1,10 @@
 var Monitor = new Class({
     _interval: 10000,
     _statues: {
-        red: 'fail',
-        blue: 'success',
-        yellow: 'building'
+        red        : 'fail',
+        blue       : 'success',
+        yellow     : 'building',
+        blue_anime : 'building'
     },
 
     initialize: function() {
