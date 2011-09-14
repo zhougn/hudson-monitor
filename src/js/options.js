@@ -24,10 +24,10 @@ var monitorOptions = {
             dataType: 'json',
             success: function(data) {
                 self._$jobsSection.empty();
-                var selectedJobs = JSON.parse(localStorage['jobs'] || '[]');
+                var monitoringJobs = JSON.parse(localStorage['jobs'] || '[]');
                 data.jobs.each(function(job) {
                     var properties = {jobName:job.name};
-                    if(selectedJobs.contains(job.name)) {
+                    if(monitoringJobs.contains(job.name)) {
                         properties['checked'] = 'checked="checked"';
                     }
                     self._$jobsSection.append(jobTemplate.substitute(properties));

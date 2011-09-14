@@ -1,29 +1,21 @@
 var Monitor = new Class({
-    _interval: 10000,
-    _jobs: [],
-    _statues: {
-        red        : 'fail',
-        blue       : 'success',
-        blue_anime : 'building',
-        red_anime : 'building'
-    },
+    _interval: 20000,
+    _jobMonitors: [],
 
     initialize: function() {
         this._$jobs = $('#jobs');
     },
 
     start: function() {
-        this._refreshStatuses();
-        setInterval(this._refreshStatuses.bind(this), this._interval);
+        this._initJobMonitors();
     },
 
-    _refreshStatuses: function() {
+    _initJobMonitors: function() {
         var serverUrl = localStorage['serverUrl'] || '';
-        var selectedJobs = JSON.parse(localStorage['jobs'] || '[]');
-        if(serverUrl === '' || selectedJobs.length === 0) {return;}
+        var monitoringJobs= JSON.parse(localStorage['jobs'] || '[]');
+        if(serverUrl === '' || monitoringJobs.length === 0) {return;}
 
         var $jobs = this._$jobs;
-        var jobTemplate = '<li class="job {status}">{name}</li>';
         var self = this;
         jQuery.ajax({
             url: serverUrl,
@@ -31,13 +23,61 @@ var Monitor = new Class({
             success: function(data) {
                 $jobs.empty();
                 data.jobs.each(function(job) {
-                    if(!selectedJobs.contains(job.name)) {
+                    if(!monitoringJobs.contains(job.name)) {
                         return;
                     }
-                    var status = self._statues[job.color];
-                    $jobs.append(jobTemplate.substitute({status:status, name:job.name}));
+                    var jobMonitor = new JobMonitor(job);
+                    $jobs.append(jobMonitor.$dom);
+                    self._jobMonitors.push(jobMonitor);
                 });
+
+                setInterval(self._refreshJobMonitors.bind(self), self._interval);
             }
         });
+    },
+
+    _refreshJobMonitors: function() {
+        this._jobMonitors.each(function(jobMonitor) {
+            jobMonitor.refresh();
+        });
+    }
+});
+
+var JobStatuses = {
+    red        : 'fail',
+    blue       : 'success',
+    blue_anime : 'building',
+    red_anime  : 'building'
+};
+
+var JobMonitor = new Class({
+    initialize: function(job) {
+        this._job = job;
+        this._buildUI();
+    },
+
+    refresh: function() {
+        var self = this;
+        jQuery.ajax({
+            url: this._job.url,
+            dataType: 'json',
+            success: function(job) {
+                self._job = job;
+                self.refreshUI();
+            }
+        });
+    },
+
+    _buildUI: function() {
+        var template = '<li class="job {status}">{name}</li>';
+        this.$dom = $(template.substitute({status:this._status(), name:this._job.name}));
+    },
+
+    _refreshUI: function() {
+        this.$dom.removeClass('success building fail').addClass(this._status());
+    },
+
+    _status: function() {
+        return JobStatuses[this._job.color];
     }
 });
