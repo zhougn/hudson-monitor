@@ -1,6 +1,6 @@
 var monitorOptions = {
     init: function() {
-        this._$projectsSection = $('#projects_section');
+        this._$jobsSection = $('#jobs_section');
         this._$serverUrl = $('#server_url');
 
         this._$serverUrl.val(localStorage['serverUrl'] || '');
@@ -17,20 +17,20 @@ var monitorOptions = {
         var serverUrl = this._$serverUrl.val();
         if(serverUrl === '') {return;}
 
-        var projectTemplate = '<p><label><input type="checkbox" name="project" value="{projectName}" {checked} />{projectName}</label></p>';
+        var jobTemplate = '<p><label><input type="checkbox" name="job" value="{jobName}" {checked} />{jobName}</label></p>';
         var self = this;
         jQuery.ajax({
             url: serverUrl,
             dataType: 'json',
             success: function(data) {
-                self._$projectsSection.empty();
-                var selectedProjects = JSON.parse(localStorage['projects'] || '[]');
+                self._$jobsSection.empty();
+                var selectedJobs = JSON.parse(localStorage['jobs'] || '[]');
                 data.jobs.each(function(job) {
-                    var properties = {projectName:job.name};
-                    if(selectedProjects.contains(job.name)) {
+                    var properties = {jobName:job.name};
+                    if(selectedJobs.contains(job.name)) {
                         properties['checked'] = 'checked="checked"';
                     }
-                    self._$projectsSection.append(projectTemplate.substitute(properties));
+                    self._$jobsSection.append(jobTemplate.substitute(properties));
                 });
             }
         });
@@ -38,8 +38,9 @@ var monitorOptions = {
 
     _saveSettings: function() {
         localStorage['serverUrl'] = this._$serverUrl.val();
-        var projectsToSelect = this._$projectsSection.find('input[name=project]:checked').map(function() { return this.value; }).toArray();
-        localStorage['projects'] = JSON.stringify(projectsToSelect);
+        var jobsToMonitor = this._$jobsSection.find('input[name=job]:checked').map(function() { return this.value; }).toArray();
+        localStorage['jobs'] = JSON.stringify(jobsToMonitor);
         chrome.tabs.create({'url':chrome.extension.getURL('monitor.html')});
+        window.close();
     }
 };

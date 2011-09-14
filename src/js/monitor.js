@@ -1,5 +1,6 @@
 var Monitor = new Class({
     _interval: 10000,
+    _jobs: [],
     _statues: {
         red        : 'fail',
         blue       : 'success',
@@ -18,8 +19,8 @@ var Monitor = new Class({
 
     _refreshStatuses: function() {
         var serverUrl = localStorage['serverUrl'] || '';
-        var selectedProjects = JSON.parse(localStorage['projects'] || '[]');
-        if(serverUrl === '' || selectedProjects.length === 0) {return;}
+        var selectedJobs = JSON.parse(localStorage['jobs'] || '[]');
+        if(serverUrl === '' || selectedJobs.length === 0) {return;}
 
         var $jobs = this._$jobs;
         var jobTemplate = '<li class="job {status}">{name}</li>';
@@ -30,7 +31,7 @@ var Monitor = new Class({
             success: function(data) {
                 $jobs.empty();
                 data.jobs.each(function(job) {
-                    if(!selectedProjects.contains(job.name)) {
+                    if(!selectedJobs.contains(job.name)) {
                         return;
                     }
                     var status = self._statues[job.color];
