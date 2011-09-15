@@ -1,6 +1,6 @@
 {
   "name": "hudson Monitor",
-  "version": "1.0",
+  "version": "0.9.1",
   "description": "Hudson Status Monitor",
   "browser_action": {
     "default_icon": "img/green_light.ico",
