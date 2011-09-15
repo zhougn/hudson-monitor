@@ -70,6 +70,7 @@ a img { border: none; }
     font-size:50px;
     font-weight:bold;
     text-align:center;
+    background-color:#8C948D;
 }
 .success {
     background-color:#AFCC17;
