@@ -1,38 +1,39 @@
 var Monitor = new Class({
-    _interval: 20000,
-    _jobMonitors: [],
-
-    initialize: function() {
-        this._$jobs = $('#jobs');
-    },
+    _interval       : 15000,
+    _jobMonitors    : [],
+    _serverUrl      : localStorage['serverUrl'] || '',
+    _monitoringJobs : JSON.parse(localStorage['jobs'] || '[]'),
 
     start: function() {
-        this._initJobMonitors();
+        if(this._monitorable()) { this._initJobMonitors(); }
     },
 
     _initJobMonitors: function() {
-        var serverUrl = localStorage['serverUrl'] || '';
-        var monitoringJobs= JSON.parse(localStorage['jobs'] || '[]');
-        if(serverUrl === '' || monitoringJobs.length === 0) {return;}
-
-        var $jobs = this._$jobs;
         var self = this;
         jQuery.ajax({
-            url: serverUrl,
+            url: self._serverUrl,
             dataType: 'json',
             success: function(data) {
-                $jobs.empty();
-                data.jobs.each(function(job) {
-                    if(!monitoringJobs.contains(job.name)) {
-                        return;
-                    }
-                    var jobMonitor = new JobMonitor(job.name, job.url);
-                    $jobs.append(jobMonitor.$dom);
-                    self._jobMonitors.push(jobMonitor);
-                });
-
+                self._buildJobMonitors(data.jobs);
                 setInterval(self._refreshJobMonitors.bind(self), self._interval);
             }
+        });
+    },
+
+    _monitorable: function() {
+        return this._serverUrl !== '' && this._monitoringJobs.length !== 0;
+    },
+
+    _buildJobMonitors: function(jobs) {
+        var $jobs = $('#jobs');
+        var self = this;
+        jobs.each(function(job) {
+            if(!self._monitoringJobs.contains(job.name)) {
+                return;
+            }
+            var jobMonitor = new JobMonitor(job.name, job.url);
+            $jobs.append(jobMonitor.$dom);
+            self._jobMonitors.push(jobMonitor);
         });
     },
 
@@ -50,16 +51,16 @@ var JobStatuses = {
     red_anime  : 'building'
 };
 
-var JobMonitor = new Class({
-    _jobEvents: {
-        build_fail: function(oldJob, newJob) {
-            return JobStatuses[oldJob.color] == 'building' && JobStatuses[newJob.color] == 'fail';
-        },
-        build_success: function(oldJob, newJob) {
-            return JobStatuses[oldJob.color] == 'building' && JobStatuses[newJob.color] == 'success';
-        }
+var JobEvents = {
+    build_fail: function(oldJob, newJob) {
+        return JobStatuses[oldJob.color] == 'building' && JobStatuses[newJob.color] == 'fail';
     },
+    build_success: function(oldJob, newJob) {
+        return JobStatuses[oldJob.color] == 'building' && JobStatuses[newJob.color] == 'success';
+    }
+};
 
+var JobMonitor = new Class({
     initialize: function(name, url) {
         this._url = url + 'api/json';
         this._name = name;
@@ -90,8 +91,8 @@ var JobMonitor = new Class({
         if(!!this._job) {
             var oldJob = this._job;
             var self = this;
-            Object.each(this._jobEvents, function(condition, eventName) {
-                if(condition(oldJob, newJob)) { self._notify(eventName); }
+            Object.each(JobEvents, function(meetCondition, eventName) {
+                if(meetCondition(oldJob, newJob)) { self._notify(eventName); }
             });
         }
 
