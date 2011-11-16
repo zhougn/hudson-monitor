@@ -21,12 +21,17 @@ hgroup, nav, section {
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
+  font: 400 12px/1.36 "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
 }
 
 /* This helps to make newer HTML5 elements behave like DIVs in older browers */
 article, aside, details, figcaption, figure, dialog,
 footer, header, hgroup, menu, nav, section {
     display:block;
+}
+
+body section {
+    padding: 10px;
 }
 
 /* Line-height should always be unitless! */
@@ -69,7 +74,8 @@ a img { border: none; }
     color:white;
     font-size:50px;
     font-weight:bold;
-    text-align:center;
+    text-align:left;
+    padding-left:250px;
     background-color:#8C948D;
 }
 .success {

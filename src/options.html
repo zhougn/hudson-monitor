@@ -9,7 +9,6 @@
     <script type="text/javascript" src="js/options.js"></script>
     <script type="text/javascript">
         $(function() {
-            console.log('hello');
             monitorOptions.init();
         });
     </script>
@@ -18,12 +17,18 @@
 </head>
 <body>
     <section>
-        <input type="text" id="server_url" value="" />
+        <label for='server_url'>
+          Hudson Server URL : 
+        </label>
+        <input type="text" id="server_url" value="" style='width:30em' />
+        <span>/api/json</span>
         <button id="scan_server">Scan</button>
     </section>
     <section id="jobs_section">
     </section>
-    <button id="ok">OK</button>
+    <section id='apply_section'>
+      <button id="ok">OK</button>
+    </section>
 </body>
 </html>
 

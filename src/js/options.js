@@ -1,11 +1,17 @@
 var monitorOptions = {
     init: function() {
         this._$jobsSection = $('#jobs_section');
-        this._$serverUrl = $('#server_url');
-
-        this._$serverUrl.val(localStorage['serverUrl'] || '');
-
+        var serverHttpUrl = (localStorage['serverUrl'] || '').replace(/\/api\/json$/, '');
+        this._$serverUrl = $('#server_url').val(serverHttpUrl);
+        this._$applySection = $('#apply_section');
         this._bindEvents();
+        $("#scan_server").click();
+    },
+
+    _getServerUrl: function() {
+        var serverHttpUrl = this._$serverUrl.val();
+        if(serverHttpUrl === '') {return;}
+        return serverHttpUrl + '/api/json';
     },
 
     _bindEvents: function() {
@@ -14,11 +20,12 @@ var monitorOptions = {
     },
 
     _scanServer: function() {
-        var serverUrl = this._$serverUrl.val();
-        if(serverUrl === '') {return;}
+        var serverUrl = this._getServerUrl();
 
         var jobTemplate = '<p><label><input type="checkbox" name="job" value="{jobName}" {checked} />{jobName}</label></p>';
         var self = this;
+        self._$jobsSection.empty();
+        self._$applySection.hide();
         jQuery.ajax({
             url: serverUrl,
             dataType: 'json',
@@ -32,12 +39,15 @@ var monitorOptions = {
                     }
                     self._$jobsSection.append(jobTemplate.substitute(properties));
                 });
+                if(self._$jobsSection.children('p').length > 0) {
+                  self._$applySection.show();
+                } 
             }
         });
     },
 
     _saveSettings: function() {
-        localStorage['serverUrl'] = this._$serverUrl.val();
+        localStorage['serverUrl'] = this._getServerUrl();
         var jobsToMonitor = this._$jobsSection.find('input[name=job]:checked').map(function() { return this.value; }).toArray();
         localStorage['jobs'] = JSON.stringify(jobsToMonitor);
         chrome.tabs.create({'url':chrome.extension.getURL('monitor.html')});
