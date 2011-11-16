@@ -64,10 +64,10 @@ var JobMonitor = new Class({
     initialize: function(name, url) {
         this._url = url + 'api/json';
         this._name = name;
-
+        this._blameList = JSON.parse(localStorage[name + '-blameList'] || '[]');
         this._buildUI();
-
         this.refresh();
+        this._userNameMapping = {};
     },
 
     refresh: function() {
@@ -78,13 +78,70 @@ var JobMonitor = new Class({
             success: function(job) {
                 self._refreshJob(job);
                 self._refreshUI();
+                self._refreshBlameList();
             }
         });
     },
 
     _buildUI: function() {
-        var template = '<li class="job">{name}</li>';
+        var template = '<li class="job">' +
+                          '{name}' +
+                          '<div class="blame">' +
+                            '<ul>' +
+                            '</ul>' +
+                          '</div>' +
+                        '</li>';
         this.$dom = $(template.substitute({name:this._name}));
+        this.$blameList = this.$dom.find('.blame > ul');
+    },
+
+    _drawAndSaveBlameList: function() {
+        var self=this;
+        if(self._blameList.length > 4) {
+            self.$blameList.append("<li>好多人<li>");
+        } else {
+            self._blameList.each(function(user){
+                if(!!self._userNameMapping[user]) {
+                    self.$blameList.append("<li>"+self._userNameMapping[user]+"<li>");
+                } else {
+                    self.$blameList.append("<li style='font-size:30px'>"+user+"<li>");
+                }
+            });
+        }
+        localStorage[name + '-blameList'] = JSON.stringify(this._blameList);
+    },
+
+    _refreshBlameList: function() {
+        this.$blameList.empty();
+        if(this._is_successs()) {
+            this._blameList = [];
+            this._drawAndSaveBlameList();
+            return;
+        }  
+        if(this._is_failure()) {
+            if(this._blameList.length === 0) {
+                this._updateBlameList();
+            } else {
+                this._drawAndSaveBlameList();
+            }
+            return;
+        }
+    },
+
+    _updateBlameList: function() {
+        var self = this;
+        jQuery.ajax({
+            url: this._lastBuildUrl + '/api/json',
+            dataType: 'json',
+            success: function(lastBuildInfo) {
+                lastBuildInfo.changeSet.items.each(function(item){
+                    if(!self._blameList.contains(item.user)) {
+                        self._blameList.push(item.user);
+                    }
+                });
+                self._drawAndSaveBlameList();
+            }
+        });
     },
 
     _refreshJob: function(newJob) {
@@ -95,8 +152,8 @@ var JobMonitor = new Class({
                 if(meetCondition(oldJob, newJob)) { self._notify(eventName); }
             });
         }
-
         this._job = newJob;
+        this._lastBuildUrl = this._job.lastBuild.url;
     },
 
     _notify: function(eventName) {
@@ -110,5 +167,13 @@ var JobMonitor = new Class({
 
     _status: function() {
         return JobStatuses[this._job.color];
+    },
+
+    _is_failure: function() {
+        return this._status() == 'fail';
+    },
+
+    _is_successs: function() {
+        return this._status() == 'success';
     }
 });

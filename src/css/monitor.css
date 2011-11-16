@@ -78,6 +78,20 @@ a img { border: none; }
     padding-left:250px;
     background-color:#8C948D;
 }
+
+.job .blame {
+    float:right;
+    margin-right:20px;
+}
+
+.job .blame li {
+    float:left;
+    font-size:90px;
+    font-weight:bold;
+    list-style:none;
+    padding:10px;
+}
+
 .success {
     background-color:#AFCC17;
 }

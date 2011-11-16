@@ -32,6 +32,7 @@ var monitorOptions = {
             success: function(data) {
                 self._$jobsSection.empty();
                 var monitoringJobs = JSON.parse(localStorage['jobs'] || '[]');
+                console.log(monitoringJobs);
                 data.jobs.each(function(job) {
                     var properties = {jobName:job.name};
                     if(monitoringJobs.contains(job.name)) {
