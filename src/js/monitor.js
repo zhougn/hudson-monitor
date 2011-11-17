@@ -15,9 +15,19 @@ var Monitor = new Class({
             dataType: 'json',
             success: function(data) {
                 self._buildJobMonitors(data.jobs);
-                setInterval(self._refreshJobMonitors.bind(self), self._interval);
+                setInterval(self._swtichScreen.bind(self), self._interval);
             }
         });
+    },
+
+    _swtichScreen: function() {
+        console.log('switch screen');
+        for(var i=0; this._jobMonitors[i]; i++) {
+            if(this._jobMonitors[i].expand()) {
+                return true;
+            }
+        }
+        this._refreshJobMonitors();
     },
 
     _monitorable: function() {
@@ -38,6 +48,7 @@ var Monitor = new Class({
     },
 
     _refreshJobMonitors: function() {
+        console.log('refresh');
         this._jobMonitors.each(function(jobMonitor) {
             jobMonitor.refresh();
         });
@@ -61,6 +72,8 @@ var JobEvents = {
 };
 
 var JobMonitor = new Class({
+    showInBigScreen : false,
+
     initialize: function(name, url) {
         this._url = url + 'api/json';
         this._name = name;
@@ -72,6 +85,7 @@ var JobMonitor = new Class({
 
     refresh: function() {
         var self = this;
+        self.showInBigScreen = false;
         jQuery.ajax({
             url: this._url,
             dataType: 'json',
@@ -86,19 +100,17 @@ var JobMonitor = new Class({
     _buildUI: function() {
         var template = '<li class="job">' +
                           '{name}' +
-                          '<div class="blame">' +
-                            '<ul>' +
-                            '</ul>' +
-                          '</div>' +
                         '</li>';
         this.$dom = $(template.substitute({name:this._name}));
-        this.$blameList = this.$dom.find('.blame > ul');
     },
 
     _drawAndSaveBlameList: function() {
         var self=this;
+        self.$dom.find('.blame').remove();
+        var $blameList = $('<ul>');
+        self.$dom.append($('<div>').addClass('blame').append($blameList).append("<div class='clear'></div>"));
         if(self._blameList.length > 4) {
-            self.$blameList.append("<li>好多人<li>");
+            $blameList.append("<li>好多人<li>");
         } else {
             self._blameList.each(function(user){
                 var avatar = self._userAvatarMapping[user];
@@ -110,14 +122,13 @@ var JobMonitor = new Class({
                 if(avatar.type == 'image') {
                     $li.append($('<img>').attr('src', avatar.file));
                 }
-                self.$blameList.append($li);
+                $blameList.append($li);
             });
         }
         localStorage[self._name + '-blameList'] = JSON.stringify(this._blameList);
     },
 
     _refreshBlameList: function() {
-        this.$blameList.empty();
         if(this._is_successs()) {
             this._blameList = [];
             this._drawAndSaveBlameList();
@@ -167,7 +178,7 @@ var JobMonitor = new Class({
     },
 
     _refreshUI: function() {
-        this.$dom.removeClass('success building fail').addClass(this._status());
+        this.$dom.removeClass('success building fail expand hidden').addClass(this._status());
     },
 
     _status: function() {
@@ -180,5 +191,16 @@ var JobMonitor = new Class({
 
     _is_successs: function() {
         return this._status() == 'success';
+    },
+
+    expand: function() {
+        if(this._is_failure() && !this.showInBigScreen) {
+            this.$dom.removeClass('hidden').addClass('expand');
+            this.$dom.siblings('.job').removeClass('expand').addClass('hidden');
+            console.log('expand '+this._name);
+            this.showInBigScreen = true;
+            return true;
+        }
+        return false;
     }
 });

@@ -66,6 +66,7 @@ a img { border: none; }
 :focus { outline: 0; }
 
 /******** css reset end **********/
+.clear{clear:both;font-size:0;height:0}
 
 .job {
     line-height:150px;
@@ -82,6 +83,32 @@ a img { border: none; }
 .job .blame {
     float:right;
     margin-right:20px;
+}
+
+.job.hidden {
+    display:none;
+}
+
+.job.expand .blame {
+    float:none;
+    margin-right:20px;
+    width:100%;
+    background-color:#F06533;
+}
+
+.job.expand .blame li {
+    padding:10px;
+    background-color:#F06533;
+}
+
+.job.expand .blame li .user {
+    font-size:90px;
+    font-weight:bold;
+}
+
+.job.expand .blame li img {
+    width:300px;
+    height:300px;
 }
 
 .job .blame li {
