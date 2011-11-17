@@ -67,7 +67,7 @@ var JobMonitor = new Class({
         this._blameList = JSON.parse(localStorage[name + '-blameList'] || '[]');
         this._buildUI();
         this.refresh();
-        this._userAvatarMapping = {};
+        this._userAvatarMapping = JSON.parse(localStorage['userAvatarMapping'] || '{}');
     },
 
     refresh: function() {
@@ -104,7 +104,6 @@ var JobMonitor = new Class({
                 var avatar = self._userAvatarMapping[user];
                 if(!!!avatar) {
                     avatar = {type:"image", file:"/img/avatars/avatar00.png"};
-                    avatar.file = avatar.file.replace(/avatar00/, "rpm1" + user.length);
                 }
                 var $li = $('<li>');
                 $li.append($('<div>').text(user).addClass('user'));
