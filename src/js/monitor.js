@@ -104,7 +104,7 @@ var JobMonitor = new Class({
                 var avatar = self._userAvatarMapping[user];
                 if(!!!avatar) {
                     avatar = {type:"image", file:"/img/avatars/avatar00.png"};
-                    avatar.file = avatar.file.replace(/avatar00/, "rpm0" + user.length+5);
+                    avatar.file = avatar.file.replace(/avatar00/, "rpm1" + user.length);
                 }
                 var $li = $('<li>');
                 $li.append($('<div>').text(user).addClass('user'));
