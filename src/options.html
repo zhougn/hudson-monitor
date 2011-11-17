@@ -17,8 +17,15 @@
 </head>
 <body>
     <section>
+        <textarea id="settingsJson" rows="5" cols="50"></textarea>
+        <div>
+            <button id="exportSettings">Export Settings</button>
+            <button id="importSettings">Import Settings</button>
+        </div>
+    </section>
+    <section>
         <label for='server_url'>
-          Hudson Server URL : 
+            Hudson Server URL : 
         </label>
         <input type="text" id="server_url" value="" style='width:30em' />
         <span>/api/json</span>
@@ -27,7 +34,7 @@
     <section id="jobs_section">
     </section>
     <section id='apply_section'>
-      <button id="ok">OK</button>
+        <button id="ok">OK</button>
     </section>
 </body>
 </html>

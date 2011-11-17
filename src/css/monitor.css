@@ -89,7 +89,17 @@ a img { border: none; }
     font-size:90px;
     font-weight:bold;
     list-style:none;
-    padding:10px;
+    margin-left:10px;
+}
+
+.job .blame li .user {
+    font-size:30px;
+    font-weight:bold;
+}
+
+.job .blame li img {
+    width:100px;
+    height:100px;
 }
 
 .success {

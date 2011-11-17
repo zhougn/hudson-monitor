@@ -1,9 +1,12 @@
 var monitorOptions = {
+    settingKeys: ['serverUrl', 'jobs'],
+
     init: function() {
-        this._$jobsSection = $('#jobs_section');
         var serverHttpUrl = (localStorage['serverUrl'] || '').replace(/\/api\/json$/, '');
         this._$serverUrl = $('#server_url').val(serverHttpUrl);
+        this._$jobsSection = $('#jobs_section');
         this._$applySection = $('#apply_section');
+        this._$settingsJson = $('#settingsJson');
         this._bindEvents();
         $("#scan_server").click();
     },
@@ -17,6 +20,9 @@ var monitorOptions = {
     _bindEvents: function() {
         $('#scan_server').click(this._scanServer.bind(this));
         $('#ok').click(this._saveSettings.bind(this));
+        this._$settingsJson.click(function(){this.select();});
+        $('#importSettings').click(this._importSettings.bind(this));
+        $('#exportSettings').click(this._exportSettings.bind(this));
     },
 
     _scanServer: function() {
@@ -32,7 +38,6 @@ var monitorOptions = {
             success: function(data) {
                 self._$jobsSection.empty();
                 var monitoringJobs = JSON.parse(localStorage['jobs'] || '[]');
-                console.log(monitoringJobs);
                 data.jobs.each(function(job) {
                     var properties = {jobName:job.name};
                     if(monitoringJobs.contains(job.name)) {
@@ -45,6 +50,27 @@ var monitorOptions = {
                 } 
             }
         });
+    },
+
+    _exportSettings: function() {
+        var settings = {};
+        this.settingKeys.each(function(key){
+            settings[key] = localStorage[key];
+        });
+        this._$settingsJson.val(JSON.stringify(settings));
+    },
+
+    _importSettings: function() {
+        var settingsJson = this._$settingsJson.val();
+        try {
+            var settings = JSON.parse(settingsJson);
+            this.settingKeys.each(function(key){
+              localStorage[key] = settings[key];
+            });
+        } catch(e) {
+            alert('Invalid Input.');
+        }
+        this.init();
     },
 
     _saveSettings: function() {

@@ -67,7 +67,7 @@ var JobMonitor = new Class({
         this._blameList = JSON.parse(localStorage[name + '-blameList'] || '[]');
         this._buildUI();
         this.refresh();
-        this._userNameMapping = {};
+        this._userAvatarMapping = {};
     },
 
     refresh: function() {
@@ -101,14 +101,20 @@ var JobMonitor = new Class({
             self.$blameList.append("<li>好多人<li>");
         } else {
             self._blameList.each(function(user){
-                if(!!self._userNameMapping[user]) {
-                    self.$blameList.append("<li>"+self._userNameMapping[user]+"<li>");
-                } else {
-                    self.$blameList.append("<li style='font-size:30px'>"+user+"<li>");
+                var avatar = self._userAvatarMapping[user];
+                if(!!!avatar) {
+                    avatar = {type:"image", file:"/img/avatars/avatar00.png"};
+                    avatar.file = avatar.file.replace(/avatar00/, "rpm0" + user.length+5);
                 }
+                var $li = $('<li>');
+                $li.append($('<div>').text(user).addClass('user'));
+                if(avatar.type == 'image') {
+                    $li.append($('<img>').attr('src', avatar.file));
+                }
+                self.$blameList.append($li);
             });
         }
-        localStorage[name + '-blameList'] = JSON.stringify(this._blameList);
+        localStorage[self._name + '-blameList'] = JSON.stringify(this._blameList);
     },
 
     _refreshBlameList: function() {
