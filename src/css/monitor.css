@@ -85,7 +85,23 @@ a img { border: none; }
     margin-right:20px;
 }
 
+.job .blame .hideInNonExpand {
+    display:none;
+}
+
+.job .blame .showInNonExpand {
+    display:block;
+}
+
 .job.hidden {
+    display:none;
+}
+
+.job.expand .blame .hideInNonExpand {
+    display:block;
+}
+
+.job.expand .blame .showInNonExpand {
     display:none;
 }
 
@@ -102,13 +118,13 @@ a img { border: none; }
 }
 
 .job.expand .blame li .user {
-    font-size:90px;
+    font-size:60px;
     font-weight:bold;
 }
 
 .job.expand .blame li img {
-    width:300px;
-    height:300px;
+    width:200px;
+    height:200px;
 }
 
 .job .blame li {

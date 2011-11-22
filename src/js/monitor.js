@@ -1,5 +1,104 @@
+var audioQueue = new Class({
+    _using          : false,
+    _content        : [],
+    _baseURL        : "http://dict.youdao.com/dictvoice?audio=",
+    _workingHours   : [9, 18],
+    // _defaultLang    : 'zh-CN',
+
+    play : function() {
+        if(this._using) {
+            setTimeout(this.play(), 1000);
+            return;
+        } else {
+            this._using = true;
+            if(this._content.length > 0) {
+                this._playFirstInQueue();
+            }
+            this._using = false;
+            return;
+        }
+    },
+
+    _playFirstInQueue : function() {
+        var audio = this._content.shift();
+        if(!!audio) {
+            console.log('playing', audio.src);
+            audio.play();
+        }
+    },
+
+    // contents [{str:string, lang:lang}]
+    addContents : function(contents) {
+        if(this._using) {
+            setTimeout(this.addContents(contents), 1000);
+            return;
+        } else {
+            this._using = true;
+            if(this._content.length === 0 ) {
+                this._content.push(this._defaultIntro());
+            }
+            for(var i=0; contents[i]; i++) {
+                this._content.push(this._buildAudio(contents[i].str,contents[i].lang));
+            }
+            this._using = false;
+            return;
+        }
+    }, 
+
+    _defaultIntro : function() {
+        var date = new Date();
+        var str = "hudson reporting, ";
+        str += "it's ";
+        str += date.getHours();
+        str += " ";
+        str += date.getMinutes();
+        str += " now. ";
+        return this._buildAudio(str);
+    },
+
+    _buildAudio : function(str, lang) {
+        var self = this;
+        var playURL = this._buildAudioURL(str, lang);
+        var audio = new Audio(playURL);
+        audio.addEventListener('ended', function(){
+            console.log('play next in queue');
+            self._playFirstInQueue();
+        });
+        return audio;
+    },
+
+    _buildAudioURL : function(str, lang) {
+        var url = this._baseURL;
+        url += encodeURI(str);
+        return url;
+    }, 
+
+    _inWorkingHours : function() {
+        var date = new Date();
+        var d = date.getDay();
+        var h = date.getHours();
+        return (d>=1 && d<=5) && (h>=this._workingHours[0] && h<=this._workingHours[1]);
+    }, 
+
+    blank: function() {
+        return this._content.length === 0;
+    },
+
+    addAllGreen: function() {
+        this.addContents([{str: "All tests are green. Come on."}]);
+    },
+
+    addStandUpNotice: function() {
+        this.addContents([{str: "Attention, it's time for stand up meeting. Repeat,it's time for stand up meeting."}]);
+    }
+
+});
+
+MonitorAudioQueue = new audioQueue();
+
 var Monitor = new Class({
     _interval       : 15000,
+    _reportInterval : 60000,
     _jobMonitors    : [],
     _serverUrl      : localStorage['serverUrl'] || '',
     _monitoringJobs : JSON.parse(localStorage['jobs'] || '[]'),
@@ -16,12 +115,30 @@ var Monitor = new Class({
             success: function(data) {
                 self._buildJobMonitors(data.jobs);
                 setInterval(self._swtichScreen.bind(self), self._interval);
+                setInterval(self._reportStatus.bind(self), self._reportInterval);
             }
         });
     },
 
+    _reportStatus: function() {
+        var date = new Date();
+        console.log(date.toString());
+        if(date.getMinutes() == 0 || date.getMinutes() == 30) {
+            for(var i=0; this._jobMonitors[i]; i++) {
+                this._jobMonitors[i].addReport();
+            }
+            if( MonitorAudioQueue.blank() ) {
+                MonitorAudioQueue.addAllGreen();
+            }
+            MonitorAudioQueue.play();
+        }
+        if(date.getHours() == 9 && date.getMinutes() == 55) {
+            MonitorAudioQueue.addStandUpNotice();
+            MonitorAudioQueue.play();
+        }
+    },
+
     _swtichScreen: function() {
-        console.log('switch screen');
         for(var i=0; this._jobMonitors[i]; i++) {
             if(this._jobMonitors[i].expand()) {
                 return true;
@@ -48,7 +165,6 @@ var Monitor = new Class({
     },
 
     _refreshJobMonitors: function() {
-        console.log('refresh');
         this._jobMonitors.each(function(jobMonitor) {
             jobMonitor.refresh();
         });
@@ -77,6 +193,7 @@ var JobMonitor = new Class({
     initialize: function(name, url) {
         this._url = url + 'api/json';
         this._name = name;
+        this._pname = JSON.parse(localStorage['jobNameMapping'])[this._name] || 'Some test project';
         this._blameList = JSON.parse(localStorage[name + '-blameList'] || '[]');
         this._buildUI();
         this.refresh();
@@ -109,39 +226,38 @@ var JobMonitor = new Class({
         self.$dom.find('.blame').remove();
         var $blameList = $('<ul>');
         self.$dom.append($('<div>').addClass('blame').append($blameList).append("<div class='clear'></div>"));
-        if(self._blameList.length > 4) {
-            $blameList.append("<li>好多人<li>");
-        } else {
-            self._blameList.each(function(user){
-                var avatar = self._userAvatarMapping[user];
-                if(!!!avatar) {
-                    avatar = {type:"image", file:"/img/avatars/avatar00.png"};
-                }
-                var $li = $('<li>');
-                $li.append($('<div>').text(user).addClass('user'));
-                if(avatar.type == 'image') {
-                    $li.append($('<img>').attr('src', avatar.file));
-                }
-                $blameList.append($li);
-            });
+        var showBrief = self._blameList.length > 4;
+        self._blameList.each(function(user){
+            var avatar = self._userAvatarMapping[user];
+            if(!!!avatar) {
+                avatar = {type:"image", file:"/img/avatars/avatar00.png"};
+            }
+            var $li = $('<li>');
+            if(showBrief) {
+              $li.addClass('hideInNonExpand')
+            }
+            $li.append($('<div>').text(user).addClass('user'));
+            if(avatar.type == 'image') {
+                $li.append($('<img>').attr('src', avatar.file));
+            }
+            $blameList.append($li);
+        });
+        if(showBrief) {
+            $blameList.append($('<li>').text("好多猪头").addClass("showInNonExpand"));
         }
         localStorage[self._name + '-blameList'] = JSON.stringify(this._blameList);
     },
 
     _refreshBlameList: function() {
-        if(this._is_successs()) {
-            this._blameList = [];
-            this._drawAndSaveBlameList();
-            return;
-        }  
-        if(this._is_failure()) {
-            if(this._blameList.length === 0) {
-                this._updateBlameList();
-            } else {
-                this._drawAndSaveBlameList();
-            }
+        if(this._is_failure() && this._blameList.length === 0) {
+            this._updateBlameList();
             return;
         }
+        if(this._is_success()) {
+            this._blameList = [];
+        }  
+        this._drawAndSaveBlameList();
+        return;
     },
 
     _updateBlameList: function() {
@@ -173,8 +289,11 @@ var JobMonitor = new Class({
     },
 
     _notify: function(eventName) {
-        var audio = document.getElementById('audio_' + eventName);
-        audio.play();
+        console.log('notify', eventName);
+        if(eventName == 'build_fail') {
+            this.addReport();
+            MonitorAudioQueue.play();
+        }
     },
 
     _refreshUI: function() {
@@ -189,7 +308,7 @@ var JobMonitor = new Class({
         return this._status() == 'fail';
     },
 
-    _is_successs: function() {
+    _is_success: function() {
         return this._status() == 'success';
     },
 
@@ -197,10 +316,29 @@ var JobMonitor = new Class({
         if(this._is_failure() && !this.showInBigScreen) {
             this.$dom.removeClass('hidden').addClass('expand');
             this.$dom.siblings('.job').removeClass('expand').addClass('hidden');
-            console.log('expand '+this._name);
             this.showInBigScreen = true;
             return true;
         }
         return false;
+    }, 
+
+    addReport: function() {
+        if(this._is_success()) {
+            return true;
+        } 
+        if(this._blameList.length > 0) {
+            var str = this._pname + " has problem. Following people: ";
+            var self = this;
+            this._blameList.each(function(user){
+                var avatar = self._userAvatarMapping[user];
+                if(!!!avatar) {
+                    avatar = {pname:user+","};
+                }
+                str += avatar.pname;
+            });
+            str += "please pay attention."
+            MonitorAudioQueue.addContents([{str:str}]);
+        }
+        return;
     }
 });
