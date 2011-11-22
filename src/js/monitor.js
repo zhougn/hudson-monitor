@@ -47,12 +47,13 @@ var audioQueue = new Class({
 
     _defaultIntro : function() {
         var date = new Date();
-        var str = "hudson reporting, ";
-        str += "it's ";
-        str += date.getHours();
-        str += " ";
-        str += date.getMinutes();
-        str += " now. ";
+        var str = "hudson ";
+        // reporting, ";
+        // str += "it's ";
+        // str += date.getHours();
+        // str += " ";
+        // str += date.getMinutes();
+        // str += " now. ";
         return this._buildAudio(str);
     },
 
@@ -246,6 +247,9 @@ var JobMonitor = new Class({
             $blameList.append($('<li>').text("好多猪头").addClass("showInNonExpand"));
         }
         localStorage[self._name + '-blameList'] = JSON.stringify(this._blameList);
+        if(!!self._notifyEvent) {
+            self._notify(self._notifyEvent);
+        }
     },
 
     _refreshBlameList: function() {
@@ -277,11 +281,12 @@ var JobMonitor = new Class({
     },
 
     _refreshJob: function(newJob) {
+        this._notifyEvent = null;
         if(!!this._job) {
             var oldJob = this._job;
             var self = this;
             Object.each(JobEvents, function(meetCondition, eventName) {
-                if(meetCondition(oldJob, newJob)) { self._notify(eventName); }
+                if(meetCondition(oldJob, newJob)) { self._notifyEvent = eventName; }
             });
         }
         this._job = newJob;
@@ -327,16 +332,21 @@ var JobMonitor = new Class({
             return true;
         } 
         if(this._blameList.length > 0) {
-            var str = this._pname + " has problem. Following people: ";
+            // var str = this._pname + " has problem. Following people: ";
             var self = this;
-            this._blameList.each(function(user){
-                var avatar = self._userAvatarMapping[user];
-                if(!!!avatar) {
-                    avatar = {pname:user+","};
-                }
-                str += avatar.pname;
-            });
-            str += "please pay attention."
+            var str = "test failed. ";
+            if(this._blameList.length > 4) {
+                str += "all people "
+            } else {
+                this._blameList.each(function(user){
+                    var avatar = self._userAvatarMapping[user];
+                    if(!!!avatar) {
+                        avatar = {pname:user+","};
+                    }
+                    str += avatar.pname;
+                });
+            }
+            str += "pay attention, please."
             MonitorAudioQueue.addContents([{str:str}]);
         }
         return;
