@@ -194,7 +194,7 @@ var JobMonitor = new Class({
     initialize: function(name, url) {
         this._url = url + 'api/json';
         this._name = name;
-        this._panme = 'test';
+        this._pname = 'test';
         this._blameList = JSON.parse(localStorage[name + '-blameList'] || '[]');
         this._buildUI();
         this.refresh();
