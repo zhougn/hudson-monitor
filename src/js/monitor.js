@@ -86,11 +86,11 @@ var audioQueue = new Class({
     },
 
     addAllGreen: function() {
-        this.addContents([{str: "All tests are green. Come on."}]);
+        this.addContents([{str: "All tests are green. "}]);
     },
 
     addStandUpNotice: function() {
-        this.addContents([{str: "Attention, it's time for stand up meeting. Repeat,it's time for stand up meeting."}]);
+        this.addContents([{str: "Attention, time for stand up meeting. "}]);
     }
 
 });
@@ -124,7 +124,7 @@ var Monitor = new Class({
     _reportStatus: function() {
         var date = new Date();
         console.log(date.toString());
-        if(date.getMinutes() == 0 || date.getMinutes() == 30) {
+        if(date.getMinutes() == 30) {
             for(var i=0; this._jobMonitors[i]; i++) {
                 this._jobMonitors[i].addReport();
             }
