@@ -1,5 +1,5 @@
 var monitorOptions = {
-    settingKeys: ['serverUrl', 'jobs', 'userAvatarMapping', 'jobNameMapping'],
+    settingKeys: ['serverUrl', 'jobs', 'userAvatarMapping'], 
 
     init: function() {
         var serverHttpUrl = (localStorage['serverUrl'] || '').replace(/\/api\/json$/, '');

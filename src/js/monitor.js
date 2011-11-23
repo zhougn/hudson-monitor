@@ -21,7 +21,7 @@ var audioQueue = new Class({
 
     _playFirstInQueue : function() {
         var audio = this._content.shift();
-        if(!!audio) {
+        if(!!audio && this._inWorkingHours()) {
             console.log('playing', audio.src);
             audio.play();
         }
@@ -194,7 +194,7 @@ var JobMonitor = new Class({
     initialize: function(name, url) {
         this._url = url + 'api/json';
         this._name = name;
-        this._pname = JSON.parse(localStorage['jobNameMapping'])[this._name] || 'Some test project';
+        this._panme = 'test';
         this._blameList = JSON.parse(localStorage[name + '-blameList'] || '[]');
         this._buildUI();
         this.refresh();
@@ -332,9 +332,8 @@ var JobMonitor = new Class({
             return true;
         } 
         if(this._blameList.length > 0) {
-            // var str = this._pname + " has problem. Following people: ";
             var self = this;
-            var str = "test failed. ";
+            var str = this._pname + " failed. ";
             if(this._blameList.length > 4) {
                 str += "all people "
             } else {
@@ -346,7 +345,7 @@ var JobMonitor = new Class({
                     str += avatar.pname;
                 });
             }
-            str += "pay attention, please."
+            str += "attention."
             MonitorAudioQueue.addContents([{str:str}]);
         }
         return;
