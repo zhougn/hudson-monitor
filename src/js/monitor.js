@@ -1,7 +1,8 @@
-var audioQueue = new Class({
+var AudioQueue = new Class({
     _using          : false,
     _content        : [],
     _baseURL        : "http://dict.youdao.com/dictvoice?audio=",
+    _workingDays    : [1, 5],
     _workingHours   : [9, 18],
     // _defaultLang    : 'zh-CN',
 
@@ -21,7 +22,7 @@ var audioQueue = new Class({
 
     _playFirstInQueue : function() {
         var audio = this._content.shift();
-        if(!!audio && this._inWorkingHours()) {
+        if(audio && this._inWorkingHours(new Date())) {
             console.log('playing', audio.src);
             audio.play();
         }
@@ -72,14 +73,15 @@ var audioQueue = new Class({
         var url = this._baseURL;
         url += encodeURI(str);
         return url;
-    }, 
+    },
 
-    _inWorkingHours : function() {
-        var date = new Date();
-        var d = date.getDay();
-        var h = date.getHours();
-        return (d>=1 && d<=5) && (h>=this._workingHours[0] && h<=this._workingHours[1]);
-    }, 
+    _inWorkingHours : function(datetime) {
+        var d = datetime.getDay();
+        var h = datetime.getHours();
+        var inWorkingDays = (d >= this._workingDays[0] && d <= this._workingDays[1]);
+        var inWorkingHours = (h >= this._workingHours[0] && h <= this._workingHours[1]);
+        return  inWorkingDays && inWorkingHours;
+    },
 
     blank: function() {
         return this._content.length === 0;
@@ -95,7 +97,7 @@ var audioQueue = new Class({
 
 });
 
-MonitorAudioQueue = new audioQueue();
+MonitorAudioQueue = new AudioQueue();
 
 var Monitor = new Class({
     _interval       : 15000,
@@ -235,7 +237,7 @@ var JobMonitor = new Class({
             }
             var $li = $('<li>');
             if(showBrief) {
-              $li.addClass('hideInNonExpand')
+              $li.addClass('hideInNonExpand');
             }
             $li.append($('<div>').text(user).addClass('user'));
             if(avatar.type == 'image') {
@@ -325,27 +327,27 @@ var JobMonitor = new Class({
             return true;
         }
         return false;
-    }, 
+    },
 
     addReport: function() {
         if(this._is_success()) {
             return true;
-        } 
+        }
         if(this._blameList.length > 0) {
             var self = this;
             var str = this._pname + " failed. ";
             if(this._blameList.length > 4) {
-                str += "all people "
+                str += "all people ";
             } else {
                 this._blameList.each(function(user){
                     var avatar = self._userAvatarMapping[user];
-                    if(!!!avatar) {
+                    if(!avatar) {
                         avatar = {pname:user+","};
                     }
                     str += avatar.pname;
                 });
             }
-            str += "attention."
+            str += "attention.";
             MonitorAudioQueue.addContents([{str:str}]);
         }
         return;
