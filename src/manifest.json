@@ -1,14 +1,20 @@
 {
-  "name": "hudson Monitor",
-  "version": "0.9.2",
-  "description": "Hudson Status Monitor",
-  "browser_action": {
-    "default_icon": "img/green_light.ico",
-    "popup": "popup.html"
-  },
-  "options_page": "options.html",
-  "permissions": [
-    "<all_urls>",
-    "tabs"
-  ]
+    "app": {
+        "launch": {
+            "local_path": "monitor.html"
+        }
+    },
+    "name": "hudson Monitor",
+    "version": "2.0.0",
+    "description": "Hudson Status Monitor (dev)",
+    "icons": {
+        "16": "img/16.png",
+        "128": "img/128.png",
+        "256": "img/256.png"
+    },
+    "options_page": "options.html",
+    "permissions": [
+        "<all_urls>",
+        "tabs"
+    ]
 }
