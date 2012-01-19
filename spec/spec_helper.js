@@ -1,4 +1,5 @@
-require('/js/jquery-1.6.3.min.js');
-require('/js/mootools-core-1.3.2.js');
+require('/js/jquery-1.7.1.min.js');
+require('/js/sugar-1.1.3.min.js');
+require('/js/chocolate.js');
 require('/js/monitor.js');
 require('/js/options.js');
