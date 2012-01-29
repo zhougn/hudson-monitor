@@ -15,7 +15,8 @@ var App = choc.klass({
     },
 
     createModels: function() {
-        this.monitor = new Monitor(Project.findAll());
+        var options = JSON.parse(localStorage['monitor'] || '{}');
+        this.monitor = Monitor.create(options);
     },
 
     createAlerts: function() {

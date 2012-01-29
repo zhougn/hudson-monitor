@@ -4,6 +4,19 @@ var Monitor = choc.klass({
     }
 });
 
+Object.merge(Monitor, {
+    create: function(options) {
+        var projectUrlTemplate = '{1}/job/{2}/api/json';
+        var projects = (options.projects || []).map(function(projectOption) {
+            projectOption = Object.merge({
+                url: projectUrlTemplate.assign(options.url, projectOption.name)
+            }, projectOption);
+            return new Project(projectOption);
+        });
+        return new Monitor(projects);
+    }
+});
+
 var MonitorView = choc.klass({
     initialize: function(monitor) {
         this.monitor = monitor;
@@ -13,9 +26,9 @@ var MonitorView = choc.klass({
     },
 
     render: function() {
-        var dom = this.dom = $('#monitor');
+        var $dom = this.$dom = $('#monitor');
         this.projectViews.each(function(projectView) {
-            dom.append(projectView.render());
+            $dom.append(projectView.render());
         });
     }
 });

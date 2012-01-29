@@ -1,16 +1,11 @@
 var Project = choc.klass({
+    Include: choc.Optionable,
+
     status: 'unknown',
+
     initialize: function(options) {
         this.name = options.name;
-    }
-});
-
-Object.merge(Project, {
-    findAll: function() {
-        var projectOptions = JSON.parse(localStorage['projects'] || '[]');
-        return projectOptions.map(function(projectOption) {
-            return new Project(projectOption);
-        });
+        this.initOptions(options);
     }
 });
 
@@ -20,7 +15,7 @@ var ProjectView = choc.klass({
     },
 
     render: function() {
-        this.dom = $('#project').tmpl(this.project);
-        return this.dom;
+        this.$dom = $('#project').tmpl(this.project);
+        return this.$dom;
     }
 });
