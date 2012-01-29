@@ -5,8 +5,9 @@ var App = choc.klass({
     start: function() {
         this.createModels();
         this.createViews();
-        this.createAlerts();
-        this.scheduleJobs();
+        this.monitorView.render();
+        //this.createAlerts();
+        //this.scheduleJobs();
     },
 
     createViews: function() {

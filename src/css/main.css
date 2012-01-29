@@ -66,9 +66,12 @@ a img { border: none; }
 :focus { outline: 0; }
 
 /******** css reset end **********/
-.clear{clear:both;font-size:0;height:0}
 
-.job {
+/* basic css */
+.clear{clear:both;font-size:0;height:0}
+/* end basic css */
+
+.project {
     line-height:150px;
     margin:20px 5px;
     font-family:Arial, Helvetica, sans-serif;
@@ -80,54 +83,54 @@ a img { border: none; }
     background-color:#8C948D;
 }
 
-.job .blame {
+.project .blame {
     float:right;
     margin-right:20px;
 }
 
-.job .blame .hideInNonExpand {
+.project .blame .hideInNonExpand {
     display:none;
 }
 
-.job .blame .showInNonExpand {
+.project .blame .showInNonExpand {
     display:block;
 }
 
-.job.hidden {
+.project.hidden {
     display:none;
 }
 
-.job.expand .blame .hideInNonExpand {
+.project.expand .blame .hideInNonExpand {
     display:block;
 }
 
-.job.expand .blame .showInNonExpand {
+.project.expand .blame .showInNonExpand {
     display:none;
 }
 
-.job.expand .blame {
+.project.expand .blame {
     float:none;
     margin-right:20px;
     width:100%;
     background-color:#F06533;
 }
 
-.job.expand .blame li {
+.project.expand .blame li {
     padding:10px;
     background-color:#F06533;
 }
 
-.job.expand .blame li .user {
+.project.expand .blame li .user {
     font-size:60px;
     font-weight:bold;
 }
 
-.job.expand .blame li img {
+.project.expand .blame li img {
     width:200px;
     height:200px;
 }
 
-.job .blame li {
+.project .blame li {
     float:left;
     font-size:90px;
     font-weight:bold;
@@ -135,12 +138,12 @@ a img { border: none; }
     margin-left:10px;
 }
 
-.job .blame li .user {
+.project .blame li .user {
     font-size:30px;
     font-weight:bold;
 }
 
-.job .blame li img {
+.project .blame li img {
     width:100px;
     height:100px;
 }
