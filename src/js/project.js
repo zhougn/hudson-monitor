@@ -1,21 +1,36 @@
-var Project = choc.klass({
-    Include: choc.Optionable,
+(function(global) {
+    var ColorToStatus = {
+        red        : 'failed',
+        blue       : 'successful',
+        blue_anime : 'building',
+        red_anime  : 'building'
+    };
 
-    status: 'unknown',
+    global.Project = choc.klass({
+        Include: choc.Optionable,
 
-    initialize: function(options) {
-        this.name = options.name;
-        this.initOptions(options);
-    }
-});
+        status: 'unknown',
 
-var ProjectView = choc.klass({
-    initialize: function(project) {
-        this.project = project;
-    },
+        initialize: function(options) {
+            this.name = options.name;
+            this.initOptions(options);
+        },
 
-    render: function() {
-        this.$dom = $('#project').tmpl(this.project);
-        return this.$dom;
-    }
-});
+        update: function(job) {
+            this.lastBuild = job.lastBuild.number;
+            this.status = ColorToStatus[job.color];
+        }
+    });
+
+    global.ProjectView = choc.klass({
+        initialize: function(project) {
+            this.project = project;
+        },
+
+        render: function() {
+            this.$dom = $('#project').tmpl(this.project);
+            return this.$dom;
+        }
+    });
+
+})(this);

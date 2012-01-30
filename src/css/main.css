@@ -148,12 +148,12 @@ a img { border: none; }
     height:100px;
 }
 
-.success {
+.successful {
     background-color:#AFCC17;
 }
 .building {
-    background:#F2CE3B url(/img/loading.gif) no-repeat 50px 50%;
+    background:#F2CE3B url(/img/building.gif) no-repeat 50px 50%;
 }
-.fail {
+.failed {
     background-color:#F06533;
 }
