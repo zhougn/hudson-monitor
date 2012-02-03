@@ -1,23 +1,27 @@
 describe("Job", function() {
-    var lastBuild = 2;
-    var nextBuild = 3;
-    var job;
-
-    beforeEach(function() {
-        job = new Job({name: 'job', url: 'http://test.url/job/unit_test/api/json'});
-        job.lastBuild = lastBuild;
-        job.status = 'successful';
-    });
-
     describe("update", function() {
-        it("should update building info when there is a new build", function() {
-            job.update({
-                color: 'red',
-                lastBuild: {number: nextBuild}
-            });
+        var currentHudsonJob = {lastBuild: {number: 2}, lastCompleteBuild: {number: 2}};
+        var job;
+        beforeEach(function() {
+            job = new Job({name: 'unit_test', url: 'http://test.url/job/unit_test/api/json'});
+            job.hudsonJob = currentHudsonJob;
+        });
 
-            expect(job.lastBuild).toBe(nextBuild);
-            expect(job.status).toBe('failed');
+        it("should update hudson job when build changed", function() {
+            var newHudsonJob = {lastBuild: {number: 3}, lastCompleteBuild: {number: 2}};
+
+            job.update(newHudsonJob);
+
+            expect(job.hudsonJob).toBe(newHudsonJob);
+        });
+
+        it("should NOT update hudson job when build not changed", function() {
+            var oldHudsonJob = job.hudsonJob;
+            var newHudsonJob = Object.clone(oldHudsonJob);
+
+            job.update(newHudsonJob);
+
+            expect(job.hudsonJob).toBe(oldHudsonJob);
         });
     });
 });
