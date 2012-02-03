@@ -6,7 +6,7 @@
         red_anime  : 'building'
     };
 
-    global.Project = choc.klass({
+    global.Job = choc.klass({
         Include: choc.Optionable,
 
         status: 'unknown',
@@ -22,13 +22,13 @@
         }
     });
 
-    global.ProjectView = choc.klass({
-        initialize: function(project) {
-            this.project = project;
+    global.JobView = choc.klass({
+        initialize: function(job) {
+            this.job = job;
         },
 
         render: function() {
-            this.$dom = $('#project').tmpl(this.project);
+            this.$dom = $('#job').tmpl(this.job);
             return this.$dom;
         }
     });

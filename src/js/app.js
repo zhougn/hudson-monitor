@@ -24,15 +24,15 @@ var App = choc.klass({
     },
 
     scheduleJobs: function() {
-        setInterval(this.refreshProjects.bind(this), this.refreshInterval);
-        setInterval(this.reportProjects.bind(this), this.reportInterval);
+        setInterval(this.refreshJobs.bind(this), this.refreshInterval);
+        setInterval(this.reportJobs.bind(this), this.reportInterval);
     },
 
-    refreshProjects: function() {
+    refreshJobs: function() {
         this.monitor.refresh();
     },
 
-    reportProjects: function() {
+    reportJobs: function() {
         this.monitor.report();
     }
 });
