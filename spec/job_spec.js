@@ -1,27 +1,62 @@
 describe("Job", function() {
-    describe("update", function() {
-        var currentHudsonJob = {lastBuild: {number: 2}, lastCompleteBuild: {number: 2}};
-        var job;
-        beforeEach(function() {
-            job = new Job({name: 'unit_test', url: 'http://test.url/job/unit_test/api/json'});
-            job.hudsonJob = currentHudsonJob;
-        });
+    describe("notify build change", function() {
+        it("should trigger build change event when last and previous hudson build are updated", function() {
+            var datas = [
+                {
+                    eventName: 'buildStart',
+                    hudsonJob: {
+                        lastBuild: {building: true, result: null, number: 2},
+                        previousBuild: {building: false, result: 'SUCCESS', number: 1}
+                    }
+                },
+                {
+                    eventName: 'startFixing',
+                    hudsonJob: {
+                        lastBuild: {building: true, result: null, number: 2},
+                        previousBuild: {building: false, result: 'FAILURE', number: 1}
+                    }
+                },
+                {
+                    eventName: 'buildFixed',
+                    hudsonJob: {
+                        lastBuild: {building: false, result: 'SUCCESS', number: 2},
+                        previousBuild: {building: false, result: 'FAILURE', number: 1}
+                    }
+                },
+                {
+                    eventName: 'buildBroken',
+                    hudsonJob: {
+                        lastBuild: {building: false, result: 'FAILURE', number: 2},
+                        previousBuild: {building: true, result: 'SUCCESS', number: 1}
+                    }
+                },
+                {
+                    eventName: 'stillFailure',
+                    hudsonJob: {
+                        lastBuild: {building: false, result: 'FAILURE', number: 2},
+                        previousBuild: {building: false, result: 'FAILURE', number: 1}
+                    }
+                },
+                {
+                    eventName: 'stillSuccess',
+                    hudsonJob: {
+                        lastBuild: {building: false, result: 'SUCCESS', number: 2},
+                        previousBuild: {building: false, result: 'SUCCESS', number: 1}
+                    }
+                }
+            ];
 
-        it("should update hudson job when build changed", function() {
-            var newHudsonJob = {lastBuild: {number: 3}, lastCompleteBuild: {number: 2}};
+            datas.each(function(data) {
+                var eventTriggered = false;
+                var job = new Job({name: 'unit_test', url: 'http://test.url/job/unit_test/api/json'});
+                job.on(data.eventName, function() { eventTriggered = true; });
+                job.hudsonJob = data.hudsonJob;
 
-            job.update(newHudsonJob);
+                job.notifyBuildChange();
 
-            expect(job.hudsonJob).toBe(newHudsonJob);
-        });
+                expect(eventTriggered).toBe(true, 'event: ' + data.eventName);
+            });
 
-        it("should NOT update hudson job when build not changed", function() {
-            var oldHudsonJob = job.hudsonJob;
-            var newHudsonJob = Object.clone(oldHudsonJob);
-
-            job.update(newHudsonJob);
-
-            expect(job.hudsonJob).toBe(oldHudsonJob);
         });
     });
 });
