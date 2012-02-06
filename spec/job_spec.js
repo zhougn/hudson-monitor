@@ -5,6 +5,13 @@ describe("Job", function() {
                 {
                     eventName: 'buildStart',
                     hudsonJob: {
+                        lastBuild: {building: true, result: null, number: 1},
+                        previousBuild: null
+                    }
+                },
+                {
+                    eventName: 'buildStart',
+                    hudsonJob: {
                         lastBuild: {building: true, result: null, number: 2},
                         previousBuild: {building: false, result: 'SUCCESS', number: 1}
                     }
@@ -31,6 +38,13 @@ describe("Job", function() {
                     }
                 },
                 {
+                    eventName: 'buildBroken',
+                    hudsonJob: {
+                        lastBuild: {building: false, result: 'FAILURE', number: 1},
+                        previousBuild: null
+                    }
+                },
+                {
                     eventName: 'stillFailure',
                     hudsonJob: {
                         lastBuild: {building: false, result: 'FAILURE', number: 2},
@@ -38,10 +52,17 @@ describe("Job", function() {
                     }
                 },
                 {
-                    eventName: 'stillSuccess',
+                    eventName: 'buildSuccess',
                     hudsonJob: {
                         lastBuild: {building: false, result: 'SUCCESS', number: 2},
                         previousBuild: {building: false, result: 'SUCCESS', number: 1}
+                    }
+                },
+                {
+                    eventName: 'buildSuccess',
+                    hudsonJob: {
+                        lastBuild: {building: false, result: 'SUCCESS', number: 1},
+                        previousBuild: null
                     }
                 }
             ];

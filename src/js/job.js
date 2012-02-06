@@ -1,6 +1,20 @@
+/*
+ * Possible job statuses includes: unknown, building, success, failure, aborted
+ * */
+
 (function(global) {
+    var eventMapping = {
+        'unknown': {'building': 'buildStart',  'success': 'buildSuccess', 'failure': 'buildBroken'},
+        'success': {'building': 'buildStart',  'success': 'buildSuccess', 'failure': 'buildBroken'},
+        'failure': {'building': 'startFixing', 'success': 'buildFixed',   'failure': 'stillFailure'}
+    };
+
     global.Job = choc.klass({
         Include: [choc.Optionable, choc.Eventable],
+
+        hudsonJob: {
+            lastBuild: {building: false, result: 'unknown', number: -1}
+        },
 
         initialize: function(options) {
             this.name = options.name;
@@ -8,22 +22,7 @@
         },
 
         notifyBuildChange: function() {
-            var eventName = '';
-
-            if (this.status() === 'building' && this.previousBuildStatus() === 'success') {
-                eventName = 'buildStart';
-            } else if (this.status() === 'building' && this.previousBuildStatus() === 'failure') {
-                eventName = 'startFixing';
-            } else if (this.status() === 'failure' && this.previousBuildStatus() === 'success') {
-                eventName = 'buildBroken';
-            } else if (this.status() === 'success' && this.previousBuildStatus() === 'failure') {
-                eventName = 'buildFixed';
-            } else if (this.status() === 'failure' && this.previousBuildStatus() === 'failure') {
-                eventName = 'stillFailure';
-            } else if (this.status() === 'success' && this.previousBuildStatus() === 'success') {
-                eventName = 'stillSuccess';
-            }
-
+            var eventName = eventMapping[this.previousBuildStatus()][this.status()];
             this.trigger(eventName, this);
         },
 
@@ -33,7 +32,8 @@
         },
 
         previousBuildStatus: function() {
-            return this.hudsonJob.previousBuild.result.toLowerCase();
+            var previousBuild = this.hudsonJob.previousBuild;
+            return previousBuild ? previousBuild.result.toLowerCase() : 'unknown';
         }
     });
 
