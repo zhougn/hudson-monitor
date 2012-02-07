@@ -5,13 +5,13 @@ var App = choc.klass({
     start: function() {
         this.createModels();
         this.createViews();
-        this.monitorView.render();
         //this.createAlerts();
-        //this.scheduleJobs();
+        this.scheduleRefreshTask();
     },
 
     createViews: function() {
         this.monitorView = new MonitorView(this.monitor);
+        this.monitorView.render();
     },
 
     createModels: function() {
@@ -23,13 +23,12 @@ var App = choc.klass({
         new MonitorAlert(this.monitor);
     },
 
-    scheduleJobs: function() {
-        setInterval(this.refreshJobs.bind(this), this.refreshInterval);
-        setInterval(this.reportJobs.bind(this), this.reportInterval);
-    },
-
-    refreshJobs: function() {
+    scheduleRefreshTask: function() {
         this.monitor.refresh();
+        setInterval(function() {
+            this.monitor.refresh();
+        }.bind(this), this.refreshInterval);
+        //setInterval(this.reportJobs.bind(this), this.reportInterval);
     },
 
     reportJobs: function() {

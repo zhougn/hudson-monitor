@@ -1,12 +1,16 @@
 var Monitor = choc.klass({
     initialize: function(jobs) {
         this.jobs = jobs || [];
+    },
+
+    refresh: function() {
+        this.jobs.forEach(function(job) { job.refresh(); });
     }
 });
 
 Object.merge(Monitor, {
     create: function(options) {
-        var jobUrlTemplate = '{1}/job/{2}/api/json';
+        var jobUrlTemplate = '{1}/job/{2}/';
         var jobs = (options.jobs || []).map(function(jobOption) {
             jobOption = Object.merge({
                 url: jobUrlTemplate.assign(options.url, jobOption.name)

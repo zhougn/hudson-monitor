@@ -9,6 +9,10 @@
         'failure': {'building': 'startFixing', 'success': 'buildFixed',   'failure': 'stillFailure'}
     };
 
+    function apiUrl(url) {
+        return url + 'api/json';
+    }
+
     global.Job = choc.klass({
         Include: [choc.Optionable, choc.Eventable],
         Delegate: {'hudsonJob': ['lastBuild', 'lastCompleteBuild']},
@@ -25,11 +29,11 @@
 
         refresh: function() {
             var self = this;
-            jQuery.get(this.options.url, function(newHudsonJob) {
+            jQuery.getJSON(apiUrl(this.options.url), function(newHudsonJob) {
                 if (!self.isBuildChanged(newHudsonJob)) return;
                 self.hudsonJob = newHudsonJob;
 
-                jQuery.get(self.lastBuild().url, function(richLastBuild) {
+                jQuery.getJSON(apiUrl(self.lastBuild().url), function(richLastBuild) {
                     self.hudsonJob.lastBuild = richLastBuild;
 
                     var previousBuild = self.previousBuild();
@@ -37,7 +41,7 @@
                         self.notifyBuildChange();
                         return;
                     }
-                    jQuery.get(previousBuild.url, function(richPreviousBuild) {
+                    jQuery.getJSON(apiUrl(previousBuild.url), function(richPreviousBuild) {
                         self.hudsonJob.previousBuild = richPreviousBuild;
                         self.notifyBuildChange();
                     });
@@ -52,8 +56,10 @@
         },
 
         notifyBuildChange: function() {
-            var eventName = eventMapping[this.previousBuildStatus()][this.status()];
-            this.trigger(eventName, this);
+            this.trigger('buildChanged', this);
+
+            var specificEvent = eventMapping[this.previousBuildStatus()][this.status()];
+            this.trigger(specificEvent, this);
         },
 
         status: function() {
@@ -78,7 +84,16 @@
 
         render: function() {
             this.$dom = $('#job').tmpl({job: this.job});
+            this.bindEvents();
             return this.$dom;
+        },
+
+        bindEvents: function() {
+            this.job.on('buildChanged', this.refresh.bind(this));
+        },
+
+        refresh: function() {
+            this.$dom.removeClass('building aborted success failure unknown').addClass(this.job.status());
         }
     });
 
