@@ -1,5 +1,9 @@
 describe("Job", function() {
-    describe("notify build change", function() {
+    function createJob() {
+        return new Job({name: 'unit_test', url: 'http://test.url/job/unit_test/api/json'});
+    }
+
+    describe("notifyBuildChange", function() {
         it("should trigger build change event when last and previous hudson build are updated", function() {
             var datas = [
                 {
@@ -69,7 +73,7 @@ describe("Job", function() {
 
             datas.each(function(data) {
                 var eventTriggered = false;
-                var job = new Job({name: 'unit_test', url: 'http://test.url/job/unit_test/api/json'});
+                var job = createJob();
                 job.on(data.eventName, function() { eventTriggered = true; });
                 job.hudsonJob = data.hudsonJob;
 
@@ -78,6 +82,17 @@ describe("Job", function() {
                 expect(eventTriggered).toBe(true, 'event: ' + data.eventName);
             });
 
+        });
+    });
+
+    describe("isBuildChanged", function() {
+        it("should tell whether there is a build change", function() {
+            var job = createJob();
+            job.hudsonJob = {lastBuild: {number: 1}, lastCompleteBuild: null};
+
+            expect(job.isBuildChanged({lastBuild: {number: 1}, lastCompleteBuild: null})).toBe(false);
+            expect(job.isBuildChanged({lastBuild: {number: 1}, lastCompleteBuild: {number: 1}})).toBe(true);
+            expect(job.isBuildChanged({lastBuild: {number: 2}, lastCompleteBuild: {number: 1}})).toBe(true);
         });
     });
 });
