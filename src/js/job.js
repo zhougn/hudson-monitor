@@ -3,7 +3,7 @@
  * */
 
 (function(global) {
-    var eventMapping = {
+    var buildChangedTypeMapping = {
         'unknown': {'building': 'buildStart',  'success': 'buildSuccess', 'failure': 'buildBroken'},
         'success': {'building': 'buildStart',  'success': 'buildSuccess', 'failure': 'buildBroken'},
         'failure': {'building': 'startFixing', 'success': 'buildFixed',   'failure': 'stillFailure'}
@@ -56,10 +56,8 @@
         },
 
         notifyBuildChange: function() {
-            this.trigger('buildChanged', this);
-
-            var specificEvent = eventMapping[this.previousBuildStatus()][this.status()];
-            this.trigger(specificEvent, this);
+            var type = buildChangedTypeMapping[this.previousBuildStatus()][this.status()];
+            this.trigger('buildChanged', [type, this]);
         },
 
         status: function() {

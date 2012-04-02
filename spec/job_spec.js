@@ -7,63 +7,63 @@ describe("Job", function() {
         it("should trigger build change event when last and previous hudson build are updated", function() {
             var datas = [
                 {
-                    eventName: 'buildStart',
+                    type: 'buildStart',
                     hudsonJob: {
                         lastBuild: {building: true, result: null, number: 1},
                         previousBuild: null
                     }
                 },
                 {
-                    eventName: 'buildStart',
+                    type: 'buildStart',
                     hudsonJob: {
                         lastBuild: {building: true, result: null, number: 2},
                         previousBuild: {building: false, result: 'SUCCESS', number: 1}
                     }
                 },
                 {
-                    eventName: 'startFixing',
+                    type: 'startFixing',
                     hudsonJob: {
                         lastBuild: {building: true, result: null, number: 2},
                         previousBuild: {building: false, result: 'FAILURE', number: 1}
                     }
                 },
                 {
-                    eventName: 'buildFixed',
+                    type: 'buildFixed',
                     hudsonJob: {
                         lastBuild: {building: false, result: 'SUCCESS', number: 2},
                         previousBuild: {building: false, result: 'FAILURE', number: 1}
                     }
                 },
                 {
-                    eventName: 'buildBroken',
+                    type: 'buildBroken',
                     hudsonJob: {
                         lastBuild: {building: false, result: 'FAILURE', number: 2},
                         previousBuild: {building: true, result: 'SUCCESS', number: 1}
                     }
                 },
                 {
-                    eventName: 'buildBroken',
+                    type: 'buildBroken',
                     hudsonJob: {
                         lastBuild: {building: false, result: 'FAILURE', number: 1},
                         previousBuild: null
                     }
                 },
                 {
-                    eventName: 'stillFailure',
+                    type: 'stillFailure',
                     hudsonJob: {
                         lastBuild: {building: false, result: 'FAILURE', number: 2},
                         previousBuild: {building: false, result: 'FAILURE', number: 1}
                     }
                 },
                 {
-                    eventName: 'buildSuccess',
+                    type: 'buildSuccess',
                     hudsonJob: {
                         lastBuild: {building: false, result: 'SUCCESS', number: 2},
                         previousBuild: {building: false, result: 'SUCCESS', number: 1}
                     }
                 },
                 {
-                    eventName: 'buildSuccess',
+                    type: 'buildSuccess',
                     hudsonJob: {
                         lastBuild: {building: false, result: 'SUCCESS', number: 1},
                         previousBuild: null
@@ -72,14 +72,14 @@ describe("Job", function() {
             ];
 
             datas.each(function(data) {
-                var eventTriggered = false;
+                var buildChangedType = '';
                 var job = createJob();
-                job.on(data.eventName, function() { eventTriggered = true; });
+                job.on('buildChanged', function(type) { buildChangedType = type; });
                 job.hudsonJob = data.hudsonJob;
 
                 job.notifyBuildChange();
 
-                expect(eventTriggered).toBe(true, 'event: ' + data.eventName);
+                expect(buildChangedType).toBe(data.type, 'build changed type: ' + data.type);
             });
 
         });

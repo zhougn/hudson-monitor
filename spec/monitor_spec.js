@@ -3,7 +3,7 @@ describe('monitor', function() {
         it('should create monitor and jobs from given options', function() {
             var serverUrl = 'http://test.url';
             var jobName = 'unit_test';
-            var jobUrl = '{1}/job/{2}/api/json'.assign(serverUrl, jobName);
+            var jobUrl = '{1}/job/{2}/'.assign(serverUrl, jobName);
 
             var monitor = Monitor.create({
                 url: serverUrl,
