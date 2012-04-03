@@ -72,14 +72,15 @@ describe("Job", function() {
             ];
 
             datas.each(function(data) {
-                var buildChangedType = '';
+                var buildChanged = false;
                 var job = createJob();
-                job.on('buildChanged', function(type) { buildChangedType = type; });
+                job.on('buildChanged', function(type) { buildChanged = true; });
                 job.hudsonJob = data.hudsonJob;
 
                 job.notifyBuildChange();
 
-                expect(buildChangedType).toBe(data.type, 'build changed type: ' + data.type);
+                expect(buildChanged).toBe(true);
+                expect(job.buildChangedType()).toBe(data.type, 'build changed type: ' + data.type);
             });
 
         });

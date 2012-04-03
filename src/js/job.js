@@ -9,6 +9,12 @@
         'failure': {'building': 'startFixing', 'success': 'buildFixed',   'failure': 'stillFailure'}
     };
 
+    var buildChangedAlertMessage = {
+        buildBroken: 'Build broken',
+        buildFixed: 'Build fixed, good job.',
+        startFixing: 'Start fixing'
+    };
+
     function apiUrl(url) {
         return url + 'api/json';
     }
@@ -56,8 +62,11 @@
         },
 
         notifyBuildChange: function() {
-            var type = buildChangedTypeMapping[this.previousBuildStatus()][this.status()];
-            this.trigger('buildChanged', [type, this]);
+            this.trigger('buildChanged', this);
+        },
+
+        buildChangedType: function() {
+            return buildChangedTypeMapping[this.previousBuildStatus()][this.status()];
         },
 
         status: function() {
@@ -87,11 +96,21 @@
         },
 
         bindEvents: function() {
-            this.job.on('buildChanged', this.refresh.bind(this));
+            this.job.on('buildChanged', this.onBuildChanged.bind(this));
         },
 
-        refresh: function() {
+        onBuildChanged: function() {
+            this.refreshUI();
+            this.alertBuildChange();
+        },
+
+        refreshUI: function() {
             this.$dom.removeClass('building aborted success failure unknown').addClass(this.job.status());
+        },
+
+        alertBuildChange: function() {
+            var type = this.job.buildChangedType();
+            chrome.tts.speak(buildChangedAlertMessage[type], {enqueue: true});
         }
     });
 
