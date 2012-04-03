@@ -21,17 +21,12 @@ hgroup, nav, section {
   font-size: 100%;
   font: inherit;
   vertical-align: baseline;
-  font: 400 12px/1.36 "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
 }
 
 /* This helps to make newer HTML5 elements behave like DIVs in older browers */
 article, aside, details, figcaption, figure, dialog,
 footer, header, hgroup, menu, nav, section {
     display:block;
-}
-
-body section {
-    padding: 10px;
 }
 
 /* Line-height should always be unitless! */
@@ -68,92 +63,8 @@ a img { border: none; }
 /******** css reset end **********/
 
 /* basic css */
+body {
+  font: 400 12px/1.36 "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
+}
 .clear{clear:both;font-size:0;height:0}
 /* end basic css */
-
-.job {
-    line-height:150px;
-    margin:20px 5px;
-    font-family:Arial, Helvetica, sans-serif;
-    color:white;
-    font-size:50px;
-    font-weight:bold;
-    text-align:left;
-    padding-left:250px;
-    background-color:#8C948D;
-}
-
-.job .blame {
-    float:right;
-    margin-right:20px;
-}
-
-.job .blame .hideInNonExpand {
-    display:none;
-}
-
-.job .blame .showInNonExpand {
-    display:block;
-}
-
-.job.hidden {
-    display:none;
-}
-
-.job.expand .blame .hideInNonExpand {
-    display:block;
-}
-
-.job.expand .blame .showInNonExpand {
-    display:none;
-}
-
-.job.expand .blame {
-    float:none;
-    margin-right:20px;
-    width:100%;
-    background-color:#F06533;
-}
-
-.job.expand .blame li {
-    padding:10px;
-    background-color:#F06533;
-}
-
-.job.expand .blame li .user {
-    font-size:60px;
-    font-weight:bold;
-}
-
-.job.expand .blame li img {
-    width:200px;
-    height:200px;
-}
-
-.job .blame li {
-    float:left;
-    font-size:90px;
-    font-weight:bold;
-    list-style:none;
-    margin-left:10px;
-}
-
-.job .blame li .user {
-    font-size:30px;
-    font-weight:bold;
-}
-
-.job .blame li img {
-    width:100px;
-    height:100px;
-}
-
-.success {
-    background-color:#AFCC17;
-}
-.building {
-    background:#F2CE3B url(/img/building.gif) no-repeat 50px 50%;
-}
-.failure {
-    background-color:#F06533;
-}

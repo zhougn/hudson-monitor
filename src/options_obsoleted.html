@@ -1,0 +1,41 @@
+<!DOCTYPE HTML>
+
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <link rel="stylesheet" href="css/monitor.css" type="text/css" media="all" />
+    <script type="text/javascript" src="js/jquery-1.6.3.min.js"></script>
+    <script type="text/javascript" src="js/mootools-core-1.3.2.js"></script>
+    <script type="text/javascript" src="js/options.js"></script>
+    <script type="text/javascript">
+        $(function() {
+            monitorOptions.init();
+        });
+    </script>
+
+    <title>Hudson Monitor Options</title>
+</head>
+<body>
+    <section>
+        <textarea id="settingsJson" rows="10" cols="100"></textarea>
+        <div>
+            <button id="exportSettings">Export Settings</button>
+            <button id="importSettings">Import Settings</button>
+        </div>
+    </section>
+    <section>
+        <label for='server_url'>
+            Hudson Server URL : 
+        </label>
+        <input type="text" id="server_url" value="" style='width:30em' />
+        <span>/api/json</span>
+        <button id="scan_server">Scan</button>
+    </section>
+    <section id="jobs_section">
+    </section>
+    <section id='apply_section'>
+        <button id="ok">OK</button>
+    </section>
+</body>
+</html>
+
