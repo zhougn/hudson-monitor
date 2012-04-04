@@ -6,8 +6,30 @@
             this.initOptions(options);
         },
 
+        getUrl: function() {
+            return this.options.url;
+        },
+
+        jobNames: function() {
+            var jobs = this.options.jobs || [];
+            return jobs.map('name');
+        },
+
+        updateJobNames: function(jobNames) {
+            this.options.jobs = jobNames.map(function(name) {
+                return {name: name};
+            });
+            return this;
+        },
+
+        updateUrl: function(url) {
+            this.options.url = url;
+            return this;
+        },
+
         save: function() {
             localStorage['options'] = JSON.stringify(this.options);
+            return this;
         }
     });
 
@@ -18,45 +40,6 @@
 
         create: function() {
             return new OptionsAdapter(this.getOptions());
-        }
-    });
-
-    global.OptionsView = choc.klass({
-        initialize: function() {
-            this.cacheElements();
-            this.bindEvents();
-
-            this.optionsAdapter = OptionsAdapter.create();
-            this.restoreOptions();
-        },
-
-        cacheElements: function() {
-            this.$serverUrl = $('#serverUrl');
-            this.$scanServer = $('#scanServer');
-            this.$jobsContainer = $('#jobsContainer');
-        },
-
-        bindEvents: function() {
-            this.$scanServer.click(this.scanServer.bind(this));
-        },
-
-        scanServer: function() {
-            var self = this;
-            var apiUrl = this.$serverUrl.val() + '/api/json';
-            jQuery.ajax({
-                url: apiUrl,
-                dataType: 'json',
-                success: function(data) {
-                    self.$jobsContainer.empty();
-                    data.jobs.each(function(job) {
-                        $('#jobTemplate').tmpl({name:job.name}).appendTo(self.$jobsContainer);
-                    });
-                }
-            });
-        },
-
-        restoreOptions: function() {
-            
         }
     });
 })(this);
