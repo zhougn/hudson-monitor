@@ -10,13 +10,35 @@
 
     <link rel="stylesheet" href="css/shared.css" type="text/css" media="all" />
     <link rel="stylesheet" href="css/options.css" type="text/css" media="all" />
+
+    <script type="text/javascript" src="js/vendor/jquery-1.7.1.min.js"></script>
+    <script type="text/javascript" src="js/vendor/jquery.tmpl.min.js"></script>
+    <script type="text/javascript" src="js/vendor/sugar-1.1.3.min.js"></script>
+    <script type="text/javascript" src="js/vendor/chocolate.min.js"></script>
+
+    <script type="text/javascript" src="js/options.js"></script>
+
+    <script id="jobTemplate" type="text/x-jquery-tmpl">
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="${name}" />
+                <span>${name}</span>
+            </label>
+        </div>
+    </script>
+
+    <script type="text/javascript">
+        $(function() {
+            new OptionsView();
+        });
+    </script>
 </head>
 <body>
     <div id="main-content">
         <div id="navbar-container">
             <h1 id="navbar-content-title">Settings</h1>
             <ul id="navbar">
-                <li class="navbar-item">Projects</li>
+                <li class="navbar-item">Hudson Server</li>
                 <li class="navbar-item">Audio Notifications</li>
             </ul>
         </div>
@@ -25,10 +47,10 @@
             <div id="mainview-content">
                 <div id="page-container">
                     <div id="projectsPage" class="page">
-                        <h1>Projects</h1>
+                        <h1>Hudson Server</h1>
                         <section>
-                            <h3>Hudson Server Url</h3>
-                            <input size="100" />
+                            <h3>Server Url</h3>
+                            <input id="serverUrl" size="100" />
                             <button id="scanServer">Scan Server</button>
                         </section>
                         <section>
