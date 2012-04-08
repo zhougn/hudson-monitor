@@ -64,7 +64,14 @@ a img { border: none; }
 
 /* basic css */
 body {
-  font: 400 12px/1.36 "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
+    font: 400 12px/1.36 "Lucida Grande","Lucida Sans Unicode",Arial,Verdana,sans-serif;
 }
-.clear{clear:both;font-size:0;height:0}
+.clear {
+    clear:both;
+    font-size:0;
+    height:0
+}
+.hidden {
+    display:none;
+}
 /* end basic css */

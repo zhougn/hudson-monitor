@@ -1,3 +1,18 @@
+/*
+ * Example options:
+ {
+    url: "http://hudson.server.url",
+    jobs: [{name: "project1"}, {name: "project2"}],
+    audioNotifications: {
+        buildStart: "",
+        buildSuccess: "",
+        buildBroken: "",
+        startFixing: "",
+        buildFixed: "",
+        stillFailure: ""
+    }
+ }
+ */
 (function(global) {
     global.OptionsAdapter = choc.klass({
         Include: choc.Optionable,

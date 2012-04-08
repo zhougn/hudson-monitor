@@ -39,8 +39,8 @@
         <div id="navbar-container">
             <h1 id="navbar-content-title">Settings</h1>
             <ul id="navbar">
-                <li class="navbar-item">Hudson Server</li>
-                <li class="navbar-item">Audio Notifications</li>
+                <li class="navbar-item navbar-item-selected" data-pagename="projectsPage">Hudson Server</li>
+                <li class="navbar-item" data-pagename="audioNotificationsPage">Audio Notifications</li>
             </ul>
         </div>
 
@@ -61,6 +61,28 @@
                         </section>
                         <section>
                             <button id="monitorJobs">Monitor Jobs</button>
+                        </section>
+                    </div>
+                    <div id="audioNotificationsPage" class="page hidden">
+                        <h1>Audio Notifications</h1>
+                        <section>
+                            <dl class="dl-horizontal">
+                                <dt>Build Start:</dt>
+                                <dd><textarea name="buildStart" cols="100" rows="5"></textarea></dd>
+                                <dt>Build Success:</dt>
+                                <dd><textarea name="buildSuccess" cols="100" rows="5"></textarea></dd>
+                                <dt>Build Broken:</dt>
+                                <dd><textarea name="buildBroken" cols="100" rows="5"></textarea></dd>
+                                <dt>Start Fixing:</dt>
+                                <dd><textarea name="startFixing" cols="100" rows="5"></textarea></dd>
+                                <dt>Build Fixed:</dt>
+                                <dd><textarea name="buildFixed" cols="100" rows="5"></textarea></dd>
+                                <dt>Still Failure:</dt>
+                                <dd><textarea name="stillFailure" cols="100" rows="5"></textarea></dd>
+                            </dl>
+                        </section>
+                        <section>
+                            <button id="saveAudioNotifications">Save Audio Notifications</button>
                         </section>
                     </div>
                 </div>

@@ -1,10 +1,10 @@
 (function(global) {
-    global.OptionsView = choc.klass({
-        initialize: function() {
+    var ProjectsView = choc.klass({
+        initialize: function(optionsAdapter) {
+            this.optionsAdapter = optionsAdapter;
+
             this.cacheElements();
             this.bindEvents();
-
-            this.optionsAdapter = OptionsAdapter.create();
             this.restoreOptions();
         },
 
@@ -66,6 +66,49 @@
 
             var url = this.$serverUrl.val().trim();
             this.optionsAdapter.updateUrl(url).updateJobNames(jobNames).save();
+        }
+    });
+
+    var AudioNotificationsView = choc.klass({
+        initialize: function() {
+            this.bindEvents();
+            this.restoreOptions();
+        },
+
+        bindEvents: function() {
+        },
+
+        restoreOptions: function() {
+        }
+    });
+
+    global.OptionsView = choc.klass({
+        initialize: function() {
+            this.optionsAdapter = OptionsAdapter.create();
+            this.projectsView = new ProjectsView(this.optionsAdapter);
+
+            this.cacheElements();
+            this.bindEvents();
+        },
+
+        cacheElements: function() {
+            this.$navbarItems = $('.navbar-item');
+            this.$pages = $('.page');
+        },
+
+        bindEvents: function() {
+            var self = this;
+            this.$navbarItems.click(function() { self.selectNavbarItem($(this)); });
+        },
+
+        selectNavbarItem: function($navbarItem) {
+            if ($navbarItem.hasClass('navbar-item-selected')) return;
+
+            this.$navbarItems.removeClass('navbar-item-selected');
+            this.$pages.addClass('hidden');
+
+            $navbarItem.addClass('navbar-item-selected');
+            $('#' + $navbarItem.data('pagename')).removeClass('hidden');
         }
     });
 })(this);

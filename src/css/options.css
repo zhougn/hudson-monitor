@@ -7,3 +7,18 @@ h3 {
     margin-bottom:10px;
 }
 
+dt {
+	font-weight: bold;
+}
+
+.dl-horizontal dt {
+    float: left;
+	clear: left;
+	width: 120px;
+}
+
+.dl-horizontal dd {
+	margin-left: 130px;
+}
+
+
